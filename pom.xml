@@ -92,6 +92,25 @@
             <artifactId>spring-boot-devtools</artifactId>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>apptcmoverse-spring-backend-repository</id>
+            <url>https://raw.github.com/quiniroizpagador/apptcmoverse-spring-backend/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>basic-core</name>
+            <url>https://maven.pkg.github.com/quiniroizpagador/basic-core/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
