@@ -33,8 +33,6 @@
     <version>1.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>basic-core</artifactId>
-    <name>basic-core</name>
-    <packaging>jar</packaging>
     <developers>
         <developer>
             <name>Joaquín Roiz Pagador</name>
@@ -55,6 +53,7 @@
         <maven.deploy.version>2.8.2</maven.deploy.version>
         <maven.site.version>3.7.1</maven.site.version>
         <maven.project.info.version>3.0.0</maven.project.info.version>
+        <github.global.server>github</github.global.server>
     </properties>
 
     <dependencies>
@@ -123,9 +122,16 @@
         <repository>
             <id>github</id>
             <name>basic-core</name>
-            <url>https://maven.pkg.github.com/quiniroizpagador/basic-core/</url>
+            <url> https://maven.pkg.github.com/quiniroizpagador/maven-packages</url>
         </repository>
     </distributionManagement>
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>the parent</name>
+            <url>https://maven.pkg.github.com/quiniroizpagador/apptcmoverse-spring-backend</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -142,49 +148,5 @@
                 </executions>
             </plugin>
         </plugins>
-        <pluginManagement><!-- lock down plugins versions to avoid using Maven
-				defaults (may be moved to parent pom) -->
-            <plugins>
-                <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>${maven.clean.version}</version>
-                </plugin>
-                <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>${maven.resources.version}</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven.compiler.version}</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven.surefire.version}</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>${maven.jar.version}</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${maven.install.version}</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${maven.deploy.version}</version>
-                </plugin>
-                <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-                <plugin>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>${maven.site.version}</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>${maven.project.info.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 </project>
