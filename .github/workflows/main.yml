@@ -33,6 +33,6 @@ jobs:
         uses: actions/checkout@v1
                  
       - name: Deploy
-        run: mvn deploy 
+        run: mvn -B -e -Dmaven.wagon.http.pool=false clean deploy 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
