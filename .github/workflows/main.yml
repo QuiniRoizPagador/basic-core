@@ -36,7 +36,7 @@ jobs:
         uses: simontunnat/action-maven-deploy@v1.1
         with:
           # Username that should be used to connect to the repository
-          username: ${{ github.actor }}
+          username: quiniroizpagador
           # Password that should be used to connect to the repository
           password: ${{ secrets.PACKAGE_TOKEN }}
           # Repository that should be deployed to
