@@ -13,7 +13,9 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub QuiniRoizPagador Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/QuiniRoizPagador</url>
+                    <url>https://maven.pkg.github.com/QuiniRoizPagador/basic-core</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>true</enabled></snapshots>
                 </repository>
             </repositories>
         </profile>
