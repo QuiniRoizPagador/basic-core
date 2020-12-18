@@ -34,6 +34,6 @@ jobs:
         uses: actions/checkout@v1
                  
       - name: Deploy
-        run: mvn -Dregistry=https://maven.pkg.github.com/quiniroizpagador -Dtoken=${{ secrets.GITHUB_TOKEN }}
+        run: mvn -Dregistry=https://maven.pkg.github.com/quiniroizpagador/maven-packages -Dtoken=${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
