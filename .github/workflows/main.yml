@@ -33,7 +33,7 @@ jobs:
         run: mvn --file pom.xml package
         
       - name: deploy
-        run: mvn -B package
+        run: mvn -B deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
