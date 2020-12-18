@@ -32,12 +32,8 @@ jobs:
       - name: Package
         run: mvn --file pom.xml package
         
-      - name: action-maven-deploy
-        uses: simontunnat/action-maven-deploy@v1.1
-        with:
-          # Username that should be used to connect to the repository
-          username: quiniroizpagador
-          # Password that should be used to connect to the repository
-          password: ${{ secrets.PACKAGE_TOKEN }}
-          # Repository that should be deployed to
-          repository: github::default::https://maven.pkg.github.com/QuiniRoizPagador/basic-core
+      - name: deploy
+        run: mvn -B package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
