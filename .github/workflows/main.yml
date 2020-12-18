@@ -26,18 +26,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Create Settings.xml
-        uses: s4u/maven-settings-action@v2.2.0
-        with:
-          servers: |
-            [{
-              "id": "github", 
-              "username": "${{ github.actor }}",
-              "password": "${{ secrets.GITHUB_TOKEN }}"
-            }] 
       - name: Install
         run: mvn clean install         
       - name: Publish package
         run: mvn deploy 
-        #env:
-        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
