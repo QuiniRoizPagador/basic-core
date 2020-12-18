@@ -40,4 +40,4 @@ jobs:
           # Password that should be used to connect to the repository
           password: ${{ secrets.GITHUB_TOKEN }}
           # Repository that should be deployed to
-          repository: https://maven.pkg.github.com/QuiniRoizPagador/basic-core
+          repository: github::default::https://maven.pkg.github.com/QuiniRoizPagador/basic-core
