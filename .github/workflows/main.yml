@@ -38,6 +38,6 @@ jobs:
           # Username that should be used to connect to the repository
           username: ${{ github.actor }}
           # Password that should be used to connect to the repository
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.PACKAGE_TOKEN }}
           # Repository that should be deployed to
           repository: github::default::https://maven.pkg.github.com/QuiniRoizPagador/basic-core
