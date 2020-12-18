@@ -32,8 +32,8 @@ jobs:
           servers: |
             [{
               "id": "github", 
-              "username": "${{ secrets.SONATYPE_USERNAME }}",
-              "password": "${{ secrets.SONATYPE_PASSWORD }}"
+              "username": "${{ github.actor }}",
+              "password": "${{ secrets.GITHUB_TOKEN }}"
             }] 
       - name: Install
         run: mvn clean install         
