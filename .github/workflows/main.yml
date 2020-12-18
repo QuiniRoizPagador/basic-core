@@ -27,12 +27,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Clean
+        run: mvn --file pom.xml clean
       - name: Package
         run: mvn --file pom.xml package
-      - name: Deploy
-        run: mvn -B --file pom.xml deploy
-        # mvn -B versions:set -DnewVersion=0.0.0-g${GITHUB_SHA} -DgenerateBackupPoms=false
-          
-        env:
-          #GITHUB_USERNAME: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: action-maven-deploy
+        # You may pin to the exact commit or the version.
+        # uses: simontunnat/action-maven-deploy@cdece2ecbbdff122ea773301779e45e35fc5c59e
+      - uses: simontunnat/action-maven-deploy@v1.1
+        with:
+          # Username that should be used to connect to the repository
+          username: ${{ github.actor }}
+          # Password that should be used to connect to the repository
+          password: ${{ secrets.GITHUB_TOKEN }}
+          # Repository that should be deployed to
+          repository: ${{ github.repository }}
