@@ -33,7 +33,7 @@ jobs:
         run: mvn --file pom.xml package
         
       - name: action-maven-deploy
-      - uses: simontunnat/action-maven-deploy@v1.1
+        uses: simontunnat/action-maven-deploy@v1.1
         with:
           # Username that should be used to connect to the repository
           username: ${{ github.actor }}
