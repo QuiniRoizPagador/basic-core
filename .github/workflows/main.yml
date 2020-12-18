@@ -17,7 +17,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  Clean_Install:
+  Clean_Package_Deploy:
     name: Compile and deploy to production server
     runs-on: ubuntu-latest
     steps:
@@ -27,21 +27,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Install
-        run: mvn --file pom.xml clean install
-
-  Deploy:
-    name: Compile and deploy to production server
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v1
-      - name: Set up Java for publishing to GitHub Packages
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
+      - name: Package
+        run: mvn --file pom.xml package
       - name: Deploy
         run: mvn --settings settings.xml --file pom.xml deploy
         env:
-          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+          GITHUB_USERNAME: ${{ github.autor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
