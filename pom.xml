@@ -120,7 +120,7 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/quiniroizpagador/maven-packages</url>
+            <url>https://maven.pkg.github.com/quiniroizpagador/${project.artifactId}</url>
         </repository>
     </distributionManagement>
 
