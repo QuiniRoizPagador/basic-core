@@ -30,9 +30,9 @@ jobs:
       - name: Package
         run: mvn --file pom.xml package
       - name: Deploy
-        run: |
-          mvn -B versions:set -DnewVersion=0.0.0-g${GITHUB_SHA} -DgenerateBackupPoms=false
-          mvn -B --settings settings.xml --file pom.xml deploy
+        run: mvn -B --file pom.xml deploy
+        # mvn -B versions:set -DnewVersion=0.0.0-g${GITHUB_SHA} -DgenerateBackupPoms=false
+          
         env:
-          GITHUB_USERNAME: ${{ github.actor }}
+          #GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
