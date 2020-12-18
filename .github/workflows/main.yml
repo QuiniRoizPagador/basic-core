@@ -31,9 +31,8 @@ jobs:
         run: mvn --file pom.xml clean
       - name: Package
         run: mvn --file pom.xml package
+        
       - name: action-maven-deploy
-        # You may pin to the exact commit or the version.
-        # uses: simontunnat/action-maven-deploy@cdece2ecbbdff122ea773301779e45e35fc5c59e
       - uses: simontunnat/action-maven-deploy@v1.1
         with:
           # Username that should be used to connect to the repository
