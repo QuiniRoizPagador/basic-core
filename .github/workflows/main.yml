@@ -21,14 +21,18 @@ jobs:
     name: Compile and deploy to production server
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - name: Set up Java for publishing to GitHub Packages  
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Install
-        run: mvn clean install         
-      - name: Publish package
+      - name: setup-maven-settings
+        uses: s4u/maven-settings-action@v1
+        with:
+          servers: '[{"id": "github", "username": "x-access-token", "password": "${GITHUB_TOKEN}"}]'
+      - name: checkout
+        uses: actions/checkout@v1
+                 
+      - name: Deploy
         run: mvn deploy 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
