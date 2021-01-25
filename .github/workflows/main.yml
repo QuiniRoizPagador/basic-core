@@ -36,4 +36,4 @@ jobs:
           # Have to skip doc and sources because GH Packages doesn't support classifiers
         run: mvn -B deploy -Dmaven.javadoc.skip=true -Dmaven.source.skip=true
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
