@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Quini Roiz
+ * Copyright 2020 Quini Roiz
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"), to deal in the Software
@@ -19,62 +19,54 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.service;
+package es.roiz.basiccore.application.controller;
 
-import org.springframework.data.domain.Page;
+import es.roiz.basiccore.domain.dto.Dto;
+import org.springframework.http.ResponseEntity;
 
+import javax.validation.Valid;
 import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 /**
- * Interface that contains the basic structure of an basic crud service. This layer connects the controller
- * layer with persistence layer.
+ * Interface that contains the basic structure of a CRUD es.roiz.recomendador.controller
+ * and it's methods
  *
- * @param <T>  The Class with which we will work from persistence
+ * @param <DTO>  The Class with which we will work as data transfer object
  * @param <PK> The id Type of the Class
  */
-public interface CrudService<T, PK extends Serializable> {
+public interface Controller<DTO extends Dto, PK extends Serializable> {
     /**
      * Method create from the basic crud
      *
      * @param o Object (validated) to create and persist
      * @return returns the T object that has been saved
      */
-    T create(T o);
-
-    /**
-     * Method create from the basic crud
-     *
-     * @param collection Iterable<T> of objects (validated) to create and persist
-     * @return returns the Iterable<T> objects that has been saved
-     */
-    Iterable<T> create(Iterable<T> collection);
+    ResponseEntity create(@Valid DTO o) throws InstantiationException, IllegalAccessException;
 
     /**
      * Method get from the basic crud (read)
      *
      * @param pk Primary Key from the object that we want to read
-     * @return return the Optional type T object read
+     * @return return the T object read
      */
-    Optional<T> read(PK pk);
+    ResponseEntity get(PK pk) throws InstantiationException, IllegalAccessException;
 
     /**
      * Method get from the basic crud which list all T objects
      *
-     * @return returns a Pageable List of T objects or inherited from it
+     * @return returns a List of T objects or inherited from it
      */
-    Iterable<T> list();
+    <DTO> Iterable<DTO> get() throws InstantiationException, IllegalAccessException;
 
     /**
      * Method get from the basic crud which list the T objects correctly paginated
      *
      * @param from  Parameter from the position
      * @param limit Parameter that limits the number of results from the position
-     * @return returns a Pageable T list or inherited from it correctly paginated
+     * @return returns a T list or inherited from it correctly paginated
      */
-    Page<? extends T> list(int from, int limit);
+    <DTO> List<? extends DTO> get(int from, int limit) throws InstantiationException, IllegalAccessException;
 
     /**
      * Method get from the basic crud which list the T objects correctly paginated,
@@ -84,53 +76,33 @@ public interface CrudService<T, PK extends Serializable> {
      * @param filter The filter with which we will filter the list result
      * @param from   Parameter from the position
      * @param limit  Parameter that limits the number of results from the position
-     * @return returns a Pageable T list or inherited from it correctly paginated ant filtered
+     * @return returns a T list or inherited from it correctly paginated ant filtered
      */
-    Page<? extends T> list(String filter, int from, int limit);
+    <S> List<? extends DTO> get(S filter, int from, int limit);
 
     /**
      * Method update from the basic CRUD
      *
-     * @param o Object of type T that will be updated
+     * @param o  Object of type T that will be updated
+     * @param pk The primary key of the object. First of all, the method must search the object
+     *           to can update it
      * @return returns the object correctly updated if don't have any problem.
      */
-    T update(T o);
+    ResponseEntity<DTO> update(@Valid DTO o, PK pk) throws InstantiationException, IllegalAccessException;
 
     /**
      * Method delete from the basic CRUD
      *
-     * @param pk The primary key of the object that will be deleted.
+     * @param pk The primary key of the object that will deleted.
      */
-    void delete(PK pk) throws SQLException;
-
-    /**
-     * Method delete from the basic CRUD
-     *
-     * @param o the object that will be deleted
-     */
-    void delete(T o);
+    void delete(PK pk) throws Exception;
 
     /**
      * Method count, it's a basic method added to the basic CRUD to facilitate the basic operations.
      *
      * @return returns the number of this object instances on the database
      */
-    Long count();
-
-    /**
-     * This utility method verifies that the object with the pk Primary key exists
-     *
-     * @param pk primary key of the object to search
-     * @return returns a boolean with the existence of the object
-     */
-    boolean exists(PK pk);
-
-    /**
-     * Method to update a list of objects
-     *
-     * @param c A collection of T objects to update
-     */
-    void updateAll(Collection<T> c);
+    ResponseEntity<Long> count();
 
     /**
      * Method count that return the number of this object instances on the database, but applying a filter
@@ -138,5 +110,5 @@ public interface CrudService<T, PK extends Serializable> {
      * @param filter Filter with which the search will be done
      * @return returns the number of this object instances on the database applying the filter
      */
-    Long countFilter(String filter);
+    <S> ResponseEntity<Long> countFilter(S filter);
 }

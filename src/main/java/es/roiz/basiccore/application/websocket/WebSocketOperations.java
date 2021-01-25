@@ -19,12 +19,16 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.websocket;
+package es.roiz.basiccore.application.websocket;
+
+import es.roiz.basiccore.domain.dto.Dto;
 
 import java.io.Serializable;
 
-public interface WebSocketOperations<T extends Serializable> {
-    T onUpdate(T o);
+public interface WebSocketOperations<DTO extends Dto, PK extends Serializable> {
+    DTO onUpdate(DTO o);
 
-    T onCreate(T o);
+    DTO onCreate(DTO o);
+
+    DTO onDelete(DTO o);
 }

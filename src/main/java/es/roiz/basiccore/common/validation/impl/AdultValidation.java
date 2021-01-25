@@ -19,15 +19,18 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.model.validation;
+package es.roiz.basiccore.common.validation.impl;
+
+import es.roiz.basiccore.common.validation.Adult;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.sql.Timestamp;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
 public class AdultValidation implements
@@ -40,14 +43,19 @@ public class AdultValidation implements
     @Override
     public boolean isValid(Object value,
                            ConstraintValidatorContext cxt) {
+        if (value == null) {
+            return false;
+        }
+
         TimeZone tz;
         ZoneId zid;
         LocalDate valueLocalDate;
+
         if (value instanceof Calendar) {
             tz = ((Calendar) value).getTimeZone();
             zid = tz == null ? ZoneId.systemDefault() : tz.toZoneId();
             valueLocalDate = LocalDateTime.ofInstant(((Calendar) value).toInstant(), zid).toLocalDate();
-        }else {
+        } else {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(((Date) value).getTime());
             tz = calendar.getTimeZone();

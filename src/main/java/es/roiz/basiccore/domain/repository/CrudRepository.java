@@ -1,5 +1,6 @@
-package es.roiz.basiccore.repository;
+package es.roiz.basiccore.domain.repository;
 
+import es.roiz.basiccore.infrastructure.DBEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -9,7 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @NoRepositoryBean
-public interface CrudRepository<T, PK extends Serializable> extends PagingAndSortingRepository<T, PK> {
+public interface CrudRepository<T extends DBEntity, PK extends Serializable> extends PagingAndSortingRepository<T, PK> {
 
     <S> List<S> findBy(Class<S> classType);
 

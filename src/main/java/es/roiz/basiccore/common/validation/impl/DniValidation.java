@@ -19,7 +19,9 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.model.validation;
+package es.roiz.basiccore.common.validation.impl;
+
+import es.roiz.basiccore.common.validation.Dni;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

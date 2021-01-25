@@ -19,28 +19,30 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.controller;
+package es.roiz.basiccore.application.controller;
 
-import es.roiz.basiccore.service.CrudService;
+import es.roiz.basiccore.domain.dto.Dto;
+import es.roiz.basiccore.domain.service.CrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
-public abstract class AbstractRestController<T, PK extends Serializable> implements Controller<T, PK> {
+public abstract class AbstractRestController<DTO extends Dto, PK extends Serializable> implements Controller<DTO, PK> {
 
-    protected final CrudService<T, PK> crudService;
+    protected final CrudService<DTO, PK> crudService;
     protected final RestTemplate restTemplate;
 
     @Autowired
@@ -48,7 +50,7 @@ public abstract class AbstractRestController<T, PK extends Serializable> impleme
 
     protected Class classType;
 
-    public AbstractRestController(Class classType, CrudService<T, PK> crudService, RestTemplate restTemplate) {
+    public AbstractRestController(Class classType, CrudService<DTO, PK> crudService, RestTemplate restTemplate) {
         this.classType = classType;
         this.crudService = crudService;
         this.restTemplate = restTemplate;
@@ -61,15 +63,15 @@ public abstract class AbstractRestController<T, PK extends Serializable> impleme
     @Override
     @PostMapping
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'CREATE')")
-    public ResponseEntity create(@Valid @RequestBody T o) {
+    public ResponseEntity create(@Valid @RequestBody DTO o) throws InstantiationException, IllegalAccessException {
         return ResponseEntity.status(HttpStatus.CREATED).body(crudService.create(o));
     }
 
     @Override
     @GetMapping(path = "{pk}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'READ')")
-    public ResponseEntity get(@PathVariable PK pk) {
-        Optional<T> res = crudService.read(pk);
+    public ResponseEntity get(@PathVariable PK pk) throws InstantiationException, IllegalAccessException {
+        Optional<DTO> res = crudService.read(pk);
         try {
             return ResponseEntity.ok(res.get());
         } catch (Exception e) {
@@ -84,28 +86,32 @@ public abstract class AbstractRestController<T, PK extends Serializable> impleme
     @Override
     @GetMapping
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public Iterable<T> get() {
+    public Iterable<DTO> get() throws InstantiationException, IllegalAccessException {
         return crudService.list();
     }
 
     @Override
     @GetMapping(path = "{from}/{limit}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public List get(@PathVariable int from, @PathVariable int limit) {
+    public List get(@PathVariable int from, @PathVariable int limit) throws InstantiationException, IllegalAccessException {
         return crudService.list(from, limit).getContent();
     }
 
     @Override
     @GetMapping(path = "{filter}/{from}/{limit}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public List get(@PathVariable @NotNull String filter, @PathVariable @NotNull int from, @PathVariable @NotNull int limit) {
-        return crudService.list(filter, from, limit).getContent();
+    public <S> List get(@PathVariable @NotNull S filter, @PathVariable @NotNull int from, @PathVariable @NotNull int limit) {
+        Page<? extends DTO> page = crudService.list(from, limit, filter);
+        if (page != null) {
+            return page.getContent();
+        }
+        return new LinkedList<>();
     }
 
     @Override
     @PutMapping(path = "/{pk}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'UPDATE')")
-    public ResponseEntity update(@Valid @RequestBody T o, @PathVariable(name = "pk") PK pk) {
+    public ResponseEntity update(@Valid @RequestBody DTO o, @PathVariable(name = "pk") PK pk) throws InstantiationException, IllegalAccessException {
         return ResponseEntity.ok(crudService.update(o));
     }
 
@@ -113,8 +119,8 @@ public abstract class AbstractRestController<T, PK extends Serializable> impleme
     @DeleteMapping(path = "/{pk}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'DELETE')")
     public void delete(@PathVariable PK pk) throws Exception {
-        if(!crudService.exists(pk)){
-            throw new Exception("Not found");
+        if (!crudService.exists(pk)) {
+            throw new EntityNotFoundException();
         }
         crudService.delete(pk);
     }
@@ -129,7 +135,18 @@ public abstract class AbstractRestController<T, PK extends Serializable> impleme
     @Override
     @GetMapping(path = "/count/{filter}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public ResponseEntity<Long> countFilter(@PathVariable String filter) {
+    public <S> ResponseEntity<Long> countFilter(@PathVariable S filter) {
         return ResponseEntity.ok(crudService.countFilter(filter));
+    }
+
+    @ExceptionHandler(value = {
+            EntityNotFoundException.class,
+            InstantiationException.class,
+            IllegalAccessException.class
+    })
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public String handleEntityExistsException(EntityNotFoundException e) {
+        return e.getMessage();
     }
 }

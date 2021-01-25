@@ -19,18 +19,26 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.model.validation;
+package es.roiz.basiccore.common.validation.impl;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.*;
+import es.roiz.basiccore.common.validation.PhoneNumber;
 
-@Documented
-@Constraint(validatedBy = AdultValidation.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Adult {
-    String message() default "You must be an adult!";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class PhoneNumberValidation implements
+        ConstraintValidator<PhoneNumber, String> {
+
+    @Override
+    public void initialize(PhoneNumber contactNumber) {
+    }
+
+    @Override
+    public boolean isValid(String value,
+                           ConstraintValidatorContext cxt) {
+        if(value == null || value.trim().isEmpty())
+            return true;
+        return value.matches("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$");
+    }
+
 }

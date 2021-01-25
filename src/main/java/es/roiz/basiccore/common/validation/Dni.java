@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Quini Roiz
+ * Copyright 2020 Quini Roiz
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"), to deal in the Software
@@ -19,13 +19,20 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.model;
+package es.roiz.basiccore.common.validation;
 
-import java.io.Serializable;
+import es.roiz.basiccore.common.validation.impl.DniValidation;
 
-/**
- * This interface designs a basic structure of an entity
- */
-public interface DBEntity extends Serializable {
-    void onPersist();
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.*;
+
+@Documented
+@Constraint(validatedBy = DniValidation.class)
+@Target( { ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Dni {
+    String message() default "Invalid DNI number";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
 }

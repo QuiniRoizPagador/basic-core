@@ -19,7 +19,9 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.model.validation;
+package es.roiz.basiccore.common.validation;
+
+import es.roiz.basiccore.common.validation.impl.PhoneNumberValidation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
