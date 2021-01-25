@@ -32,8 +32,8 @@ jobs:
       - name: Package
         run: mvn --file pom.xml package
         
-      - name: deploy
-        run: mvn -B deploy
+      - name: deploy package
+        run: mvn --batch-mode deploy
         env:
+          GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash

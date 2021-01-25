@@ -19,7 +19,7 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.application.controller;
+package es.roiz.basiccore;
 
 import es.roiz.basiccore.domain.dto.Dto;
 import org.springframework.http.ResponseEntity;

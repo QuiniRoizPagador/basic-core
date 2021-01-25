@@ -19,7 +19,7 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore.application.websocket;
+package es.roiz.basiccore.websocket;
 
 import es.roiz.basiccore.domain.dto.Dto;
 
