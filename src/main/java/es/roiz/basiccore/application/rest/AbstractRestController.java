@@ -19,8 +19,9 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package es.roiz.basiccore;
+package es.roiz.basiccore.application.rest;
 
+import es.roiz.basiccore.application.Controller;
 import es.roiz.basiccore.domain.dto.Dto;
 import es.roiz.basiccore.domain.service.CrudService;
 import org.springframework.beans.factory.annotation.Autowired;
