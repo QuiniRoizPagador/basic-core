@@ -2,14 +2,8 @@ name: CI/CD
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    branches: [ master ]
-  #on:
-  #  workflow_run:
-  #    workflows: ["CI/CD"]
-  #    branches: [main]
-  #    types:
-  #      - completed
+  release:
+    types: [ created ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,8 +23,8 @@ jobs:
           java-version: 1.8
       - name: Clean
         run: mvn --file pom.xml clean
-      - name: Package
-        run: mvn --file pom.xml package
+      - name: Install
+        run: mvn --file pom.xml install
 
       - name: Deploy to GitHub packages
           # Have to skip doc and sources because GH Packages doesn't support classifiers
