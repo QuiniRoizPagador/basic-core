@@ -27,10 +27,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Clean
+        run: mvn --file pom.xml clean
       - name: Package
         run: mvn --file pom.xml package
-      - name: Deploy
-        run: mvn --settings settings.xml --file pom.xml deploy
+        
+      - name: deploy
+        run: mvn -B deploy
         env:
-          GITHUB_USERNAME: ${{ github.autor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
