@@ -133,8 +133,8 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>GitHub quiniroizpagador Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/quiniroizpagador/${project.artifactId}</url>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/quiniroizpagador/basic-core</url>
         </repository>
     </distributionManagement>
 
