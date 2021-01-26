@@ -25,6 +25,7 @@ import es.roiz.basiccore.domain.dto.Dto;
 import org.springframework.data.domain.Page;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
@@ -43,7 +44,7 @@ public interface CrudService<DTO extends Dto, PK extends Serializable> {
      * @param o Object (validated) to create and persist
      * @return returns the T object that has been saved
      */
-    DTO create(DTO o) throws IllegalAccessException, InstantiationException;
+    DTO create(DTO o) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException;
 
     /**
      * Method create from the basic crud
@@ -51,7 +52,7 @@ public interface CrudService<DTO extends Dto, PK extends Serializable> {
      * @param collection Iterable<T> of objects (validated) to create and persist
      * @return returns the Iterable<T> objects that has been saved
      */
-    Iterable<DTO> create(Iterable<DTO> collection) throws IllegalAccessException, InstantiationException;
+    Iterable<DTO> create(Iterable<DTO> collection) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method get from the basic crud (read)
@@ -59,14 +60,14 @@ public interface CrudService<DTO extends Dto, PK extends Serializable> {
      * @param pk Primary Key from the object that we want to read
      * @return return the Optional type T object read
      */
-    Optional<DTO> read(PK pk) throws IllegalAccessException, InstantiationException;
+    Optional<DTO> read(PK pk) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method get from the basic crud which list all T objects
      *
      * @return returns a Pageable List of T objects or inherited from it
      */
-    Iterable<DTO> list() throws IllegalAccessException, InstantiationException;
+    Iterable<DTO> list() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method get from the basic crud which list the T objects correctly paginated
@@ -75,7 +76,7 @@ public interface CrudService<DTO extends Dto, PK extends Serializable> {
      * @param limit Parameter that limits the number of results from the position
      * @return returns a Pageable T list or inherited from it correctly paginated
      */
-    Page<? extends DTO> list(int from, int limit) throws IllegalAccessException, InstantiationException;
+    Page<? extends DTO> list(int from, int limit) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method get from the basic crud which list the T objects correctly paginated,
@@ -95,7 +96,7 @@ public interface CrudService<DTO extends Dto, PK extends Serializable> {
      * @param o Object of type T that will be updated
      * @return returns the object correctly updated if don't have any problem.
      */
-    DTO update(DTO o) throws IllegalAccessException, InstantiationException;
+    DTO update(DTO o) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method delete from the basic CRUD
@@ -109,7 +110,7 @@ public interface CrudService<DTO extends Dto, PK extends Serializable> {
      *
      * @param o the object that will be deleted
      */
-    void delete(DTO o) throws IllegalAccessException, InstantiationException;
+    void delete(DTO o) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method count, it's a basic method added to the basic CRUD to facilitate the basic operations.
@@ -131,7 +132,7 @@ public interface CrudService<DTO extends Dto, PK extends Serializable> {
      *
      * @param c A collection of T objects to update
      */
-    void updateAll(Collection<DTO> c) throws InstantiationException, IllegalAccessException;
+    void updateAll(Collection<DTO> c) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method count that return the number of this object instances on the database, but applying a filter

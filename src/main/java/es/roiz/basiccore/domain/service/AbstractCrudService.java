@@ -21,9 +21,9 @@
 
 package es.roiz.basiccore.domain.service;
 
+import es.roiz.basiccore.domain.Transformer;
 import es.roiz.basiccore.domain.dto.Dto;
 import es.roiz.basiccore.infrastructure.DBEntity;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +31,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -58,45 +59,30 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     }
 
     @Override
-    public DTO create(DTO o) throws IllegalAccessException, InstantiationException {
-        T entity = (T) getClass().newInstance();
-        BeanUtils.copyProperties(o, entity);
+    public DTO create(DTO o) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+        T entity = Transformer.transformToEntity(o, entityType);
         entity = repository.save(entity);
-        BeanUtils.copyProperties(entity, o);
+        o = Transformer.transformToDTO(entity, dtoType);
         return o;
     }
 
     @Override
-    public Iterable<DTO> create(Iterable<DTO> collection) throws IllegalAccessException, InstantiationException {
+    public Iterable<DTO> create(Iterable<DTO> collection) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
 
-        Iterable<T> entities = new LinkedList<>();
-        T entity;
-        for (DTO dto : collection) {
-            entity = entityType.newInstance();
-            BeanUtils.copyProperties(dto, entity);
-            ((List<T>) entities).add(entity);
-        }
+        Iterable<T> entities = Transformer.transformToEntity(collection, entityType);
 
         entities = repository.saveAll(entities);
 
-
-        ((List<DTO>) collection).clear();
-
-        for (T e : entities) {
-            DTO dto = dtoType.newInstance();
-            BeanUtils.copyProperties(e, dto);
-            ((List<DTO>) collection).add(dto);
-        }
+        collection = Transformer.transformToDTO(entities, dtoType);
 
         return collection;
     }
 
     @Override
-    public Optional<DTO> read(PK o) throws IllegalAccessException, InstantiationException {
+    public Optional<DTO> read(PK o) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Optional<T> entity = repository.findById(o);
         if (entity.isPresent()) {
-            DTO dto = dtoType.newInstance();
-            BeanUtils.copyProperties(entity.get(), dto);
+            DTO dto = Transformer.transformToDTO(entity.get(), dtoType);
             return Optional.of(dto);
         } else {
             return Optional.empty();
@@ -105,18 +91,16 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     }
 
     @Override
-    public DTO update(DTO o) throws IllegalAccessException, InstantiationException {
-        T entity = entityType.newInstance();
-        BeanUtils.copyProperties(o, entity);
+    public DTO update(DTO o) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        T entity = Transformer.transformToEntity(o, entityType);
         entity = repository.save(entity);
-        BeanUtils.copyProperties(entity, o);
+        o = Transformer.transformToDTO(entity, dtoType);
         return o;
     }
 
     @Override
-    public void delete(DTO o) throws IllegalAccessException, InstantiationException {
-        T entity = entityType.newInstance();
-        BeanUtils.copyProperties(o, entity);
+    public void delete(DTO o) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        T entity = Transformer.transformToEntity(o, entityType);
         repository.delete(entity);
     }
 
@@ -126,32 +110,19 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     }
 
     @Override
-    public Iterable<DTO> list() throws IllegalAccessException, InstantiationException {
+    public Iterable<DTO> list() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Iterable<T> returned = repository.findAll();
-        List<DTO> res = new LinkedList<>();
-        DTO dto;
-        for (T entity : returned) {
-            dto = dtoType.newInstance();
-            BeanUtils.copyProperties(entity, dto);
-            res.add(dto);
-        }
-        return res;
+        return Transformer.transformToDTO(returned, dtoType);
     }
 
     @Override
-    public Page<DTO> list(int from, int limit) throws IllegalAccessException, InstantiationException {
+    public Page<DTO> list(int from, int limit) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         if (limit <= 0) {
             return new PageImpl<>(new LinkedList<>());
         }
 
         Page<T> returned = repository.findAll(PageRequest.of(from, limit));
-        List<DTO> res = new LinkedList<>();
-        DTO dto;
-        for (T entity : returned) {
-            dto = dtoType.newInstance();
-            BeanUtils.copyProperties(entity, dto);
-            res.add(dto);
-        }
+        List<DTO> res = (List<DTO>) Transformer.transformToDTO(returned.getContent(), dtoType);
         return new PageImpl<>(res);
     }
 
@@ -169,7 +140,7 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     }
 
     @Override
-    public void updateAll(Collection<DTO> c) throws InstantiationException, IllegalAccessException {
+    public void updateAll(Collection<DTO> c) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         this.create(c);
     }
 

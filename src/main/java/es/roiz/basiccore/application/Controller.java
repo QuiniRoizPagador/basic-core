@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.validation.Valid;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public interface Controller<DTO extends Dto, PK extends Serializable> {
      * @param o Object (validated) to create and persist
      * @return returns the T object that has been saved
      */
-    ResponseEntity create(@Valid DTO o) throws InstantiationException, IllegalAccessException;
+    ResponseEntity create(@Valid DTO o) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
     /**
      * Method get from the basic crud (read)
@@ -50,14 +51,14 @@ public interface Controller<DTO extends Dto, PK extends Serializable> {
      * @param pk Primary Key from the object that we want to read
      * @return return the T object read
      */
-    ResponseEntity get(PK pk) throws InstantiationException, IllegalAccessException;
+    ResponseEntity get(PK pk) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method get from the basic crud which list all T objects
      *
      * @return returns a List of T objects or inherited from it
      */
-    <DTO> Iterable<DTO> get() throws InstantiationException, IllegalAccessException;
+    <DTO> Iterable<DTO> get() throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method get from the basic crud which list the T objects correctly paginated
@@ -66,7 +67,7 @@ public interface Controller<DTO extends Dto, PK extends Serializable> {
      * @param limit Parameter that limits the number of results from the position
      * @return returns a T list or inherited from it correctly paginated
      */
-    <DTO> List<? extends DTO> get(int from, int limit) throws InstantiationException, IllegalAccessException;
+    <DTO> List<? extends DTO> get(int from, int limit) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method get from the basic crud which list the T objects correctly paginated,
@@ -88,7 +89,7 @@ public interface Controller<DTO extends Dto, PK extends Serializable> {
      *           to can update it
      * @return returns the object correctly updated if don't have any problem.
      */
-    ResponseEntity<DTO> update(@Valid DTO o, PK pk) throws InstantiationException, IllegalAccessException;
+    ResponseEntity<DTO> update(@Valid DTO o, PK pk) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * Method delete from the basic CRUD

@@ -37,6 +37,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -64,14 +65,16 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     @Override
     @PostMapping
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'CREATE')")
-    public ResponseEntity create(@Valid @RequestBody DTO o) throws InstantiationException, IllegalAccessException {
+    public ResponseEntity create(@Valid @RequestBody DTO o) throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
         return ResponseEntity.status(HttpStatus.CREATED).body(crudService.create(o));
     }
 
     @Override
     @GetMapping(path = "{pk}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'READ')")
-    public ResponseEntity get(@PathVariable PK pk) throws InstantiationException, IllegalAccessException {
+    public ResponseEntity get(@PathVariable PK pk) throws InstantiationException, IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException {
         Optional<DTO> res = crudService.read(pk);
         try {
             return ResponseEntity.ok(res.get());
@@ -87,14 +90,16 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     @Override
     @GetMapping
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public Iterable<DTO> get() throws InstantiationException, IllegalAccessException {
+    public Iterable<DTO> get() throws InstantiationException, IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException {
         return crudService.list();
     }
 
     @Override
     @GetMapping(path = "{from}/{limit}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public List get(@PathVariable int from, @PathVariable int limit) throws InstantiationException, IllegalAccessException {
+    public List get(@PathVariable int from, @PathVariable int limit) throws InstantiationException, IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException {
         return crudService.list(from, limit).getContent();
     }
 
@@ -112,7 +117,8 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     @Override
     @PutMapping(path = "/{pk}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'UPDATE')")
-    public ResponseEntity update(@Valid @RequestBody DTO o, @PathVariable(name = "pk") PK pk) throws InstantiationException, IllegalAccessException {
+    public ResponseEntity update(@Valid @RequestBody DTO o, @PathVariable(name = "pk") PK pk) throws InstantiationException, IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException {
         return ResponseEntity.ok(crudService.update(o));
     }
 
@@ -143,11 +149,13 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     @ExceptionHandler(value = {
             EntityNotFoundException.class,
             InstantiationException.class,
-            IllegalAccessException.class
+            IllegalAccessException.class,
+            NoSuchMethodException.class,
+            InvocationTargetException.class
     })
     @ResponseBody
     @ResponseStatus(value = HttpStatus.CONFLICT)
-    public String handleEntityExistsException(EntityNotFoundException e) {
+    public String handleEntityExistsException(Exception e) {
         return e.getMessage();
     }
 }
