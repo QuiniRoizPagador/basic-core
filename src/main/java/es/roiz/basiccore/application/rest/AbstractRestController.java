@@ -106,7 +106,7 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     @Override
     @GetMapping(path = "{filter}/{from}/{limit}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public <S> List get(@PathVariable @NotNull S filter, @PathVariable @NotNull int from, @PathVariable @NotNull int limit) {
+    public <S> List get(@PathVariable @NotNull S filter, @PathVariable @NotNull int from, @PathVariable @NotNull int limit) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Page<? extends DTO> page = crudService.list(from, limit, filter);
         if (page != null) {
             return page.getContent();

@@ -127,7 +127,8 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     }
 
     @Override
-    public abstract <S> Page<? extends DTO> list(int from, int limit, S filter);
+    public abstract <S> Page<? extends DTO> list(int from, int limit, S filter) throws IllegalAccessException, InstantiationException,
+            InvocationTargetException, NoSuchMethodException;
 
     @Override
     public Long count() {
@@ -136,7 +137,7 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
 
     @Override
     public boolean exists(PK pk) {
-        return repository.findById(pk).isPresent();
+        return repository.existsById(pk);
     }
 
     @Override

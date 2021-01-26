@@ -88,7 +88,8 @@ public interface CrudService<DTO extends Dto, PK extends Serializable> {
      * @param limit  Parameter that limits the number of results from the position
      * @return returns a Pageable T list or inherited from it correctly paginated ant filtered
      */
-    <S> Page<? extends DTO> list(int from, int limit, S filter);
+    <S> Page<? extends DTO> list(int from, int limit, S filter) throws IllegalAccessException, InstantiationException,
+            InvocationTargetException, NoSuchMethodException;
 
     /**
      * Method update from the basic CRUD

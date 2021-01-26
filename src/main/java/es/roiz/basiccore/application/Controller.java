@@ -79,7 +79,7 @@ public interface Controller<DTO extends Dto, PK extends Serializable> {
      * @param limit  Parameter that limits the number of results from the position
      * @return returns a T list or inherited from it correctly paginated ant filtered
      */
-    <S> List<? extends DTO> get(S filter, int from, int limit);
+    <S> List<? extends DTO> get(S filter, int from, int limit) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
 
     /**
      * Method update from the basic CRUD
