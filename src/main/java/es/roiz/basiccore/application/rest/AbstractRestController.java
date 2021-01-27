@@ -33,11 +33,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -65,16 +65,14 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     @Override
     @PostMapping
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'CREATE')")
-    public ResponseEntity create(@Valid @RequestBody DTO o) throws InstantiationException, IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
+    public ResponseEntity create(@Valid @RequestBody DTO o) {
         return ResponseEntity.status(HttpStatus.CREATED).body(crudService.create(o));
     }
 
     @Override
     @GetMapping(path = "{pk}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'READ')")
-    public ResponseEntity get(@PathVariable PK pk) throws InstantiationException, IllegalAccessException,
-            NoSuchMethodException, InvocationTargetException {
+    public ResponseEntity get(@PathVariable PK pk) {
         Optional<DTO> res = crudService.read(pk);
         try {
             return ResponseEntity.ok(res.get());
@@ -90,23 +88,21 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     @Override
     @GetMapping
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public Iterable<DTO> get() throws InstantiationException, IllegalAccessException,
-            NoSuchMethodException, InvocationTargetException {
+    public Iterable<DTO> get() {
         return crudService.list();
     }
 
     @Override
     @GetMapping(path = "{from}/{limit}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public List get(@PathVariable int from, @PathVariable int limit) throws InstantiationException, IllegalAccessException,
-            NoSuchMethodException, InvocationTargetException {
+    public List get(@PathVariable int from, @PathVariable int limit) {
         return crudService.list(from, limit).getContent();
     }
 
     @Override
     @GetMapping(path = "{filter}/{from}/{limit}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'LIST')")
-    public <S> List get(@PathVariable @NotNull S filter, @PathVariable @NotNull int from, @PathVariable @NotNull int limit) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public <S> List get(@PathVariable @NotNull S filter, @PathVariable @NotNull int from, @PathVariable @NotNull int limit) {
         Page<? extends DTO> page = crudService.list(from, limit, filter);
         if (page != null) {
             return page.getContent();
@@ -117,8 +113,7 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     @Override
     @PutMapping(path = "/{pk}")
     @PreAuthorize("hasPermission(#this.this.getClassType().getSimpleName(),'UPDATE')")
-    public ResponseEntity update(@Valid @RequestBody DTO o, @PathVariable(name = "pk") PK pk) throws InstantiationException, IllegalAccessException,
-            NoSuchMethodException, InvocationTargetException {
+    public ResponseEntity update(@Valid @RequestBody DTO o, @PathVariable(name = "pk") PK pk) {
         return ResponseEntity.ok(crudService.update(o));
     }
 
@@ -147,15 +142,12 @@ public abstract class AbstractRestController<DTO extends Dto, PK extends Seriali
     }
 
     @ExceptionHandler(value = {
-            EntityNotFoundException.class,
-            InstantiationException.class,
-            IllegalAccessException.class,
-            NoSuchMethodException.class,
-            InvocationTargetException.class
+            EntityExistsException.class,
+            EntityNotFoundException.class
     })
     @ResponseBody
-    @ResponseStatus(value = HttpStatus.CONFLICT)
-    public String handleEntityExistsException(Exception e) {
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public String handleException(Exception e) {
         return e.getMessage();
     }
 }

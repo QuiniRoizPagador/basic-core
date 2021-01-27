@@ -21,9 +21,9 @@
 
 package es.roiz.basiccore.domain.service;
 
-import es.roiz.basiccore.domain.Transformer;
 import es.roiz.basiccore.domain.dto.Dto;
 import es.roiz.basiccore.infrastructure.DBEntity;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,12 +31,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service layer that connects the controller and the persistence.
@@ -51,38 +51,46 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     protected final R repository;
     protected final Class<T> entityType;
     protected final Class<DTO> dtoType;
+    protected final ModelMapper modelMapper;
 
-    public AbstractCrudService(R repository, Class<T> entityType, Class<DTO> dtoType) {
+    public AbstractCrudService(R repository, ModelMapper modelMapper, Class<T> entityType, Class<DTO> dtoType) {
         this.repository = repository;
         this.entityType = entityType;
         this.dtoType = dtoType;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public DTO create(DTO o) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-        T entity = Transformer.transformToEntity(o, entityType);
+    public DTO create(DTO o) {
+        T entity = modelMapper.map(o, entityType);
         entity = repository.save(entity);
-        o = Transformer.transformToDTO(entity, dtoType);
+        o = modelMapper.map(entity, dtoType);
         return o;
     }
 
     @Override
-    public Iterable<DTO> create(Iterable<DTO> collection) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public Iterable<DTO> create(Iterable<DTO> collection) {
 
-        Iterable<T> entities = Transformer.transformToEntity(collection, entityType);
+        Iterable<T> entities = ((List<DTO>) collection)
+                .stream()
+                .map(dto -> modelMapper.map(dto, entityType))
+                .collect(Collectors.toList());
 
         entities = repository.saveAll(entities);
 
-        collection = Transformer.transformToDTO(entities, dtoType);
+        collection = ((List<T>) entities)
+                .stream()
+                .map(e -> modelMapper.map(e, dtoType))
+                .collect(Collectors.toList());
 
         return collection;
     }
 
     @Override
-    public Optional<DTO> read(PK o) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public Optional<DTO> read(PK o) {
         Optional<T> entity = repository.findById(o);
         if (entity.isPresent()) {
-            DTO dto = Transformer.transformToDTO(entity.get(), dtoType);
+            DTO dto = modelMapper.map(entity.get(), dtoType);
             return Optional.of(dto);
         } else {
             return Optional.empty();
@@ -91,16 +99,16 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     }
 
     @Override
-    public DTO update(DTO o) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        T entity = Transformer.transformToEntity(o, entityType);
+    public DTO update(DTO o) {
+        T entity = modelMapper.map(o, entityType);
         entity = repository.save(entity);
-        o = Transformer.transformToDTO(entity, dtoType);
+        o = modelMapper.map(entity, dtoType);
         return o;
     }
 
     @Override
-    public void delete(DTO o) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        T entity = Transformer.transformToEntity(o, entityType);
+    public void delete(DTO o) {
+        T entity = modelMapper.map(o, entityType);
         repository.delete(entity);
     }
 
@@ -110,25 +118,32 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     }
 
     @Override
-    public Iterable<DTO> list() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public Iterable<DTO> list() {
         Iterable<T> returned = repository.findAll();
-        return Transformer.transformToDTO(returned, dtoType);
+        
+        return ((List<T>) returned)
+                .stream()
+                .map(e -> modelMapper.map(e, dtoType))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Page<DTO> list(int from, int limit) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public Page<DTO> list(int from, int limit) {
         if (limit <= 0) {
             return new PageImpl<>(new LinkedList<>());
         }
 
         Page<T> returned = repository.findAll(PageRequest.of(from, limit));
-        List<DTO> res = (List<DTO>) Transformer.transformToDTO(returned.getContent(), dtoType);
+        List<DTO> res = returned.getContent()
+                .stream()
+                .map(e -> modelMapper.map(e, dtoType))
+                .collect(Collectors.toList());
+
         return new PageImpl<>(res);
     }
 
     @Override
-    public abstract <S> Page<? extends DTO> list(int from, int limit, S filter) throws IllegalAccessException, InstantiationException,
-            InvocationTargetException, NoSuchMethodException;
+    public abstract <S> Page<? extends DTO> list(int from, int limit, S filter);
 
     @Override
     public Long count() {
@@ -141,7 +156,7 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     }
 
     @Override
-    public void updateAll(Collection<DTO> c) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void updateAll(Collection<DTO> c) {
         this.create(c);
     }
 
