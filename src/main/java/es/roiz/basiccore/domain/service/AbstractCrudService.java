@@ -120,7 +120,7 @@ public abstract class AbstractCrudService<DTO extends Dto, R extends PagingAndSo
     @Override
     public Iterable<DTO> list() {
         Iterable<T> returned = repository.findAll();
-        
+
         return ((List<T>) returned)
                 .stream()
                 .map(e -> modelMapper.map(e, dtoType))
