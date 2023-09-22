@@ -4,7 +4,7 @@ proyecto base sobre el que se sustenta el trabajo fin de grado "sistema de recom
 estructura básica del proyecto:
 
 ![img.png](class_diagram.png)
-
+```
 ├── src
 ├── ├── java
 ├── ├── ├── es
@@ -44,3 +44,4 @@ estructura básica del proyecto:
 ├── .class_diagram.png
 ├── pom.xml
 └── readme.md
+```
