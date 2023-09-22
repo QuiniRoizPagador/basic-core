@@ -23,6 +23,7 @@ jobs:
         run: mvn clean validate compile test
 
   release-on-push:
+    needs: compile-test
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -38,7 +39,9 @@ jobs:
           echo "Got tag name ${{ steps.release.outputs.tag_name }}"
           echo "Got release version ${{ steps.release.outputs.version }}"
           echo "Upload release artifacts to ${{ steps.release.outputs.upload_url }}"
-  build:
+
+  publish-package:
+    needs: release-on-push
     runs-on: ubuntu-latest
 
     steps:
