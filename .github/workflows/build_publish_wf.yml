@@ -12,6 +12,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  compile-test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile and Test
+        run: mvn clean validate compile test
+
   release-on-push:
     runs-on: ubuntu-latest
     env:
