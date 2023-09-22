@@ -1,5 +1,5 @@
-# basic core
-proyecto base sobre el que se sustenta el trabajo fin de grado "sistema de recomendación inteligente para toma de decisiones", el cual dio lugar a la aplicación apptc moverse, fruto de la colaboración entre diferentes grados de la universidad pablo de olavide.
+# Basic Core
+Proyecto base sobre el que se sustenta el trabajo fin de grado "sistema de recomendación inteligente para toma de decisiones", el cual dio lugar a la aplicación apptc moverse, fruto de la colaboración entre diferentes grados de la universidad pablo de olavide.
 
 estructura básica del proyecto:
 
